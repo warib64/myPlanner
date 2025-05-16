@@ -1,5 +1,6 @@
 # My Planner
-### Video Demo:  [YouTube link](https://youtu.be/RckM0MbYGOg)
+### Video Demo:
+[YouTube link](https://youtu.be/RckM0MbYGOg)
 ### Description:
 My Planner is a standalone browser-based application that uses IndexedDB to store and handle data locally, without the need for an internet connection.
 It consists of four tools, namely Goals, Matrix, Notes and Timer, as well as its index, which contains three options to manage the stored data.
