@@ -36,7 +36,7 @@ function loadGoals(term, status) {
                 li.className = "list-group-item text-center";
                 li.innerHTML = `
                     <button class="btn btn-link link-offset-3 link-underline-secondary link-underline-opacity-0 link-underline-opacity-75-hover px-0" onclick="buttons()">
-                        <span class="text-body text-break">${goal.text}</span>
+                        <span class="text-body text-break user-select-auto">${goal.text}</span>
                     </button>
                 `;
 
@@ -118,7 +118,7 @@ function addGoal(term) {
     li.className = "list-group-item text-center";
     li.innerHTML = `
         <button class="btn btn-link link-offset-3 link-underline-secondary link-underline-opacity-0 link-underline-opacity-75-hover px-0" onclick="buttons()">
-            <span class="text-body text-break">${text}</span>
+            <span class="text-body text-break user-select-auto">${text}</span>
         </button>
     `;
 

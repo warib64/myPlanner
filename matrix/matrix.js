@@ -9,6 +9,17 @@ if (!db) {
     });
 } else loadAll();
 
+document.addEventListener("DOMContentLoaded", () => {
+	const inputs = document.querySelectorAll("input");
+	inputs.forEach(input => {
+		input.addEventListener("keydown", (e) => {
+			if (e.key === "Enter") {
+				addTask();
+			}
+		});
+	});
+});
+
 function loadAll() {
     loadTasks("high", "low");
     loadTasks("high", "high");
@@ -32,7 +43,7 @@ function loadTasks(impact, effort) {
                 li.className = "list-group-item";
                 li.innerHTML = `
                     <button class="btn btn-link link-offset-3 link-underline-dark link-underline-opacity-0 link-underline-opacity-100-hover text-decoration-line-through" onclick="removeTask()">
-                        <span class="text-body text-break">${task.text}</span>
+                        <span class="text-body text-break user-select-auto">${task.text}</span>
                     </button>
                 `;
 
@@ -54,7 +65,7 @@ function loadTasks(impact, effort) {
     }
 }
 
-function addTask(before = false) {
+function addTask() {
     const buttonLi = event.currentTarget.parentNode;
     const input = buttonLi.querySelector("input");
     const text = input.value.trim().replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -90,7 +101,7 @@ function addTask(before = false) {
     li.className = "list-group-item";
     li.innerHTML = `
         <button class="btn btn-link link-offset-3 link-underline-dark link-underline-opacity-0 link-underline-opacity-100-hover text-decoration-line-through" onclick="removeTask()">
-            <span class="text-body text-break">${text}</span>
+            <span class="text-body text-break user-select-auto">${text}</span>
         </button>
     `;
 

@@ -53,14 +53,13 @@ function loadNotes() {
 }
 
 function renderNote(title, text, id) {
-
     const col = document.createElement("div");
     col.className = "col-lg-3 col-md-6 col-sm-12 mb-4";
     col.innerHTML = `
         <div class="card">
             <div class="card-header">
                 <button class="btn btn-link text-body link-offset-3 link-underline-secondary link-underline-opacity-0 link-underline-opacity-75-hover text-break" data-bs-toggle="collapse" data-bs-target="#note-${id}" aria-expanded="false" aria-controls="note-${id}">
-                    <h4 class="card-title mb-0">${title}</h4>
+                    <h4 class="card-title user-select-auto mb-0">${title}</h4>
                 </button>
             </div>
             <div id="note-${id}" class="collapse card-body py-1">
