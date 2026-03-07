@@ -49,10 +49,7 @@ function loadNotes() {
     };
 }
 
-let highestId = 0;
-
 function renderNote(title, text, id) {
-	if (id === "") id = ++highestId;
     const col = document.createElement("div");
     col.className = "col-lg-3 col-md-6 col-sm-12 mb-4";
     col.innerHTML = `
@@ -70,6 +67,8 @@ function renderNote(title, text, id) {
     `;
     document.querySelector(".row").append(col);
 }
+
+let highestId = 0;
 
 function addNote() {
     const titleElement = newNote.parentNode.querySelector("#newTitle");
@@ -103,7 +102,7 @@ function addNote() {
             alert("The new note wasn't saved to the database and will not persist.");
             console.error("Failed to save note:", request.error);
         };
-    } else renderNote(title, text, "");
+    } else renderNote(title, text, ++highestId);
 
     titleElement.value = newNote.value = "";
     newNote.style.height = "auto";
