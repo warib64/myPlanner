@@ -31,15 +31,12 @@ newNote.addEventListener("input", function() {
     }
 });
 
-let highestId = 0;
-
 function loadNotes() {
     const request = db.transaction("notes", "readonly").objectStore("notes").getAll();
 
     request.onsuccess = () => {
         const notes = request.result;
         if (notes.length > 0) {
-            highestId = notes[notes.length - 1].id;
             notes.forEach(note => {
                 renderNote(note.title, note.text, note.id);
             });
@@ -52,7 +49,10 @@ function loadNotes() {
     };
 }
 
+let highestId = 0;
+
 function renderNote(title, text, id) {
+	if (id === "") id = ++highestId;
     const col = document.createElement("div");
     col.className = "col-lg-3 col-md-6 col-sm-12 mb-4";
     col.innerHTML = `
@@ -83,20 +83,27 @@ function addNote() {
         alert("Character count exceeds the allowed maximum.");
         return;
     }
-
+	
     if (db) {
         const request = db.transaction("notes", "readwrite").objectStore("notes").add({
             title,
             text
         });
 
+        request.onsuccess = () => {
+            renderNote(title, text, request.result);
+            saving.classList.add("d-none");
+			
+			done.classList.add("show");
+			setTimeout(() => done.classList.remove("show"), 800);
+        };
+
         request.onerror = () => {
+			saving.classList.add("d-none");
             alert("The new note wasn't saved to the database and will not persist.");
             console.error("Failed to save note:", request.error);
         };
-    }
-
-    renderNote(title, text, ++highestId);
+    } else renderNote(title, text, "");
 
     titleElement.value = newNote.value = "";
     newNote.style.height = "auto";
@@ -109,12 +116,19 @@ function removeNote() {
         if (db) {
             const id = Number(card.querySelector(".card-body").id.slice(5));
             const request = db.transaction("notes", "readwrite").objectStore("notes").delete(id);
-
-            request.onsuccess = () => {
+			
+			request.onsuccess = () => {
+				saving.classList.add("d-none");
                 card.parentNode.remove();
-            };
+				
+				done.classList.add("show");
+				setTimeout(() => done.classList.remove("show"), 800);
+				
+				return;
+			};
 
             request.onerror = () => {
+				saving.classList.add("d-none");
                 alert("The note couldn't be removed from the database, please try again.");
                 console.error("Failed to save note:", request.error);
             };

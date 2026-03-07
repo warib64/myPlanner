@@ -16,7 +16,6 @@ function loadAll() {
     loadGoals("long", "finished");
 }
 
-let highestId = 0;
 const short = document.getElementById("short");
 const long = document.getElementById("long");
 const shortDivider = document.getElementById("shortDivider");
@@ -28,8 +27,6 @@ function loadGoals(term, status) {
     request.onsuccess = () => {
         const goals = request.result;
         if (goals.length > 0) {
-            const highId = goals[goals.length - 1].id;
-            if (highId > highestId) highestId = highId;
             goals.forEach((goal) => {
                 const li = document.createElement("li");
                 li.id = "goal-" + goal.id;
@@ -94,9 +91,10 @@ function addGoal(term) {
         return;
     }
 
-    let id;
+    const li = document.createElement("li");
 
     if (db) {
+		saving.classList.remove("d-none");
         const request = db.transaction("goals", "readwrite").objectStore("goals").add({
             status: "active",
             term,
@@ -104,17 +102,20 @@ function addGoal(term) {
         });
 
         request.onsuccess = () => {
-            id = ++highestId;
-        }
+            li.id = "goal-" + request.result;
+            saving.classList.add("d-none");
+			
+			done.classList.add("show");
+			setTimeout(() => done.classList.remove("show"), 800);
+        };
 
         request.onerror = () => {
+			saving.classList.add("d-none");
             alert("The new goal wasn't saved to the database and will not persist.");
             console.error("Failed to save goal:", request.error);
-        }
+        };
     }
-
-    const li = document.createElement("li");
-    if (id) li.id = "goal-" + id;
+	
     li.className = "list-group-item text-center";
     li.innerHTML = `
         <button class="btn btn-link link-offset-3 link-underline-secondary link-underline-opacity-0 link-underline-opacity-75-hover px-0" onclick="buttons()">
@@ -132,13 +133,26 @@ function removeGoal() {
     if (confirm('The goal "' + li.querySelector("span").innerHTML + '" will be removed.')) {
         const id = li.id.slice(5);
         if (id != "") {
+			saving.classList.add("d-none");
+			
             const request = db.transaction("goals", "readwrite").objectStore("goals").delete(Number(id));
+			
+			request.onsuccess = () => {
+				saving.classList.add("d-none");
+				li.remove();
+				
+				done.classList.add("show");
+				setTimeout(() => done.classList.remove("show"), 800);
+				
+				return;
+			};
 
             request.onerror = () => {
+				saving.classList.add("d-none");
                 alert("The goal wasn't removed from the database, try again.");
                 console.error("Failed to delete goal:", request.error);
                 return;
-            }
+            };
         }
 
         li.remove();
@@ -156,6 +170,8 @@ function finish() {
 
         getRequest.onsuccess = () => {
             const goal = getRequest.result;
+            saving.classList.add("d-none");
+			
             if (!goal) {
                 console.error("Goal not found with ID:", id);
             } else {
@@ -167,13 +183,17 @@ function finish() {
                     return;
                 }
             }
-        }
-
-        getRequest.onerror = () => {
+			
+			done.classList.add("show");
+			setTimeout(() => done.classList.remove("show"), 800);
+        };
+		
+        request.onerror = () => {
+			saving.classList.add("d-none");
             alert("There was an error when marking this goal as finished, try again.");
             console.error("Failed to fetch goal:", getRequest.error);
             return;
-        }
+        };
     }
 
     btn.parentNode.remove();
@@ -193,6 +213,8 @@ function restore() {
 
         getRequest.onsuccess = () => {
             const goal = getRequest.result;
+            saving.classList.add("d-none");
+			
             if (!goal) {
                 console.error("Goal not found with ID:", id);
             } else {
@@ -204,13 +226,17 @@ function restore() {
                     return;
                 }
             }
-        }
-
-        getRequest.onerror = () => {
+			
+			done.classList.add("show");
+			setTimeout(() => done.classList.remove("show"), 800);
+        };
+		
+        request.onerror = () => {
+			saving.classList.add("d-none");
             alert("There was an error when marking this goal as active, try again.");
             console.error("Failed to fetch goal:", getRequest.error);
             return;
-        }
+        };
     }
 
     btn.parentNode.remove();
